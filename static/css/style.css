@@ -1,0 +1,119 @@
+/* Custom styles for Recipe Explorer */
+
+body {
+    background-color: #f8f9fa;
+}
+
+.recipe-header {
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Recipe cards */
+.card h5 {
+    color: #333;
+    font-weight: 600;
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+
+/* Form styling */
+.ingredient-item, .instruction-item {
+    position: relative;
+}
+
+.remove-ingredient, .remove-instruction {
+    white-space: nowrap;
+}
+
+/* Import page */
+pre {
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
+
+/* Alert styling */
+.alert {
+    border: none;
+    border-radius: 8px;
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Recipe detail page */
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid #dee2e6;
+    padding: 0.75rem 0;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.list-group-numbered .list-group-item {
+    padding-left: 2rem;
+}
+
+/* Make sure the page takes full height */
+html, body {
+    height: 100%;
+}
+
+#root, .container-fluid {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .card-footer .btn {
+        margin-bottom: 0.25rem;
+    }
+    
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+    
+    .d-flex.gap-2 > * {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Loading states */
+.btn:disabled {
+    cursor: not-allowed;
+}
+
+/* Search form */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}

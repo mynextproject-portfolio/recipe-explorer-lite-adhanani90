@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                {% if is_edit and recipe %}
+                <li class="breadcrumb-item"><a href="/recipes/{{ recipe.id }}">{{ recipe.title }}</a></li>
+                <li class="breadcrumb-item active">Edit</li>
+                {% else %}
+                <li class="breadcrumb-item active">New Recipe</li>
+                {% endif %}
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 offset-lg-2">
+        <h1>{% if is_edit %}Edit Recipe{% else %}Add New Recipe{% endif %}</h1>
+        
+        <form method="post" action="{% if is_edit %}/recipes/{{ recipe.id }}/edit{% else %}/recipes/new{% endif %}">
+            <!-- Basic Info -->
+            <div class="mb-3">
+                <label for="title" class="form-label">Recipe Title</label>
+                <input type="text" class="form-control" id="title" name="title" 
+                       value="{% if recipe %}{{ recipe.title }}{% endif %}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required>{% if recipe %}{{ recipe.description }}{% endif %}</textarea>
+            </div>
+            
+            <div class="mb-3">
+                <label for="difficulty" class="form-label">Difficulty Level</label>
+                <select class="form-control" id="difficulty" name="difficulty" required>
+                    <option value="">Select difficulty</option>
+                    <option value="Easy" {% if recipe and recipe.difficulty == 'Easy' %}selected{% endif %}>Easy</option>
+                    <option value="Medium" {% if recipe and recipe.difficulty == 'Medium' %}selected{% endif %}>Medium</option>
+                    <option value="Hard" {% if recipe and recipe.difficulty == 'Hard' %}selected{% endif %}>Hard</option>
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="tags" class="form-label">Tags (comma-separated)</label>
+                <input type="text" class="form-control" id="tags" name="tags" 
+                       value="{% if recipe %}{{ recipe.tags|join(', ') }}{% endif %}"
+                       placeholder="e.g. vegetarian, quick, healthy">
+            </div>
+            
+            <!-- Ingredients Section -->
+            <div class="mb-4">
+                <label class="form-label">Ingredients</label>
+                <div id="ingredients-container">
+                    {% if recipe and recipe.ingredients %}
+                        {% for ingredient in recipe.ingredients %}
+                        <div class="ingredient-item mb-2">
+                            <div class="input-group">
+                                <input type="text" class="form-control ingredient-input" 
+                                       value="{{ ingredient }}" required>
+                                <button type="button" class="btn btn-outline-danger remove-ingredient">Remove</button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="ingredient-item mb-2">
+                            <div class="input-group">
+                                <input type="text" class="form-control ingredient-input" 
+                                       placeholder="Enter ingredient..." required>
+                                <button type="button" class="btn btn-outline-danger remove-ingredient">Remove</button>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <button type="button" id="add-ingredient" class="btn btn-outline-primary btn-sm">
+                    + Add Ingredient
+                </button>
+                <!-- Hidden textarea to submit ingredients -->
+                <textarea name="ingredients" id="ingredients-data" style="display: none;"></textarea>
+            </div>
+            
+            <!-- Instructions Section -->
+            <div class="mb-4">
+                <label for="instructions" class="form-label">Instructions</label>
+                <textarea class="form-control" id="instructions" name="instructions" rows="8" required 
+                          placeholder="Enter complete cooking instructions...">{% if recipe %}{{ recipe.instructions }}{% endif %}</textarea>
+            </div>
+            
+            <!-- Submit Buttons -->
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">
+                    {% if is_edit %}Update Recipe{% else %}Create Recipe{% endif %}
+                </button>
+                <a href="{% if is_edit and recipe %}/recipes/{{ recipe.id }}{% else %}/{% endif %}" 
+                   class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Form submission handler to collect dynamic fields
+document.querySelector('form').addEventListener('submit', function(e) {
+    // Collect ingredients
+    const ingredients = [];
+    document.querySelectorAll('.ingredient-input').forEach(input => {
+        if (input.value.trim()) {
+            ingredients.push(input.value.trim());
+        }
+    });
+    document.getElementById('ingredients-data').value = ingredients.join('\n');
+});
+</script>
+{% endblock %}

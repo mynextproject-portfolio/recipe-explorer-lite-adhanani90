@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1>Recipe Explorer</h1>
+        <p class="text-muted">Discover and manage your favorite recipes</p>
+    </div>
+</div>
+
+<!-- Search Form -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <form method="get" action="/" class="d-flex">
+            <input class="form-control me-2" type="search" name="search" 
+                   placeholder="Search recipes by title..." value="{{ search_query }}">
+            <button class="btn btn-outline-primary" type="submit">Search</button>
+        </form>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="/recipes/new" class="btn btn-success">
+            <i class="bi bi-plus"></i> Add New Recipe
+        </a>
+    </div>
+</div>
+
+<!-- Search Results Info -->
+{% if search_query %}
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="alert alert-light">
+            Found {{ recipes|length }} recipe(s) for "{{ search_query }}"
+            <a href="/" class="btn btn-sm btn-outline-secondary ms-2">Clear Search</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Recipe Grid -->
+<div class="row">
+    {% if recipes %}
+        {% for recipe in recipes %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ recipe.title }}</h5>
+                    <p class="card-text">{{ recipe.description[:100] }}{% if recipe.description|length > 100 %}...{% endif %}</p>
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            <strong>Difficulty:</strong> <span class="badge bg-{% if recipe.difficulty == 'Easy' %}success{% elif recipe.difficulty == 'Medium' %}warning{% else %}danger{% endif %}">{{ recipe.difficulty }}</span>
+                        </small>
+                    </div>
+                    {% if recipe.tags %}
+                    <div class="mb-2">
+                        {% for tag in recipe.tags %}
+                        <span class="badge bg-secondary me-1">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            {{ recipe.ingredients|length }} ingredients • 
+                            {{ recipe.instructions|length }} steps
+                        </small>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="/recipes/{{ recipe.id }}" class="btn btn-primary btn-sm">View Recipe</a>
+                    <a href="/recipes/{{ recipe.id }}/edit" class="btn btn-outline-secondary btn-sm">Edit</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <h3>No recipes found</h3>
+                {% if search_query %}
+                    <p>Try adjusting your search terms or <a href="/">browse all recipes</a>.</p>
+                {% else %}
+                    <p>Get started by <a href="/recipes/new">adding your first recipe</a> or 
+                       <a href="/import">importing some sample data</a>.</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+{% if recipes %}
+<div class="row mt-4">
+    <div class="col-12 text-center">
+        <p class="text-muted">Showing {{ recipes|length }} recipe(s)</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

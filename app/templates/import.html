@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">Import Recipes</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 offset-lg-2">
+        <h1>Import Recipes</h1>
+        <p class="text-muted">Upload a JSON file to import multiple recipes at once. This will replace all existing recipes.</p>
+        <p><strong>Try it:</strong> Upload the <code>sample-recipes.json</code> file from the repository root to load three example recipes.</p>
+        
+        <div class="card">
+            <div class="card-body">
+                <form action="/api/recipes/import" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Choose JSON file</label>
+                        <input type="file" class="form-control" id="file" name="file" 
+                               accept=".json" required>
+                        <div class="form-text">
+                            Upload a JSON file containing an array of recipe objects.
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <strong>Warning:</strong> Importing will replace all existing recipes. 
+                        This action cannot be undone.
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">Import Recipes</button>
+                        <a href="/" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">JSON Format</h5>
+                <p class="text-muted">Your JSON file should contain an array of recipe objects like this:</p>
+                <pre class="bg-light p-3"><code>[
+  {
+    "id": "recipe-id-1",
+    "title": "Recipe Title",
+    "description": "Recipe description",
+    "ingredients": ["ingredient 1", "ingredient 2"],
+    "instructions": "First, do step 1.\n\nThen, do step 2.",
+    "tags": ["tag1", "tag2"],
+    "difficulty": "Easy",
+    "created_at": "2024-01-01T00:00:00",
+    "updated_at": "2024-01-01T00:00:00"
+  }
+]</code></pre>
+                <p class="text-muted">
+                    <small>Note: The <code>id</code>, <code>created_at</code>, and <code>updated_at</code> fields are optional and will be generated automatically if not provided.</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

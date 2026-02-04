@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">{{ recipe.title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <h1>{{ recipe.title }}</h1>
+        <p class="lead">{{ recipe.description }}</p>
+        
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h6>Difficulty Level</h6>
+                <span class="badge bg-{% if recipe.difficulty == 'Easy' %}success{% elif recipe.difficulty == 'Medium' %}warning{% else %}danger{% endif %} fs-6">{{ recipe.difficulty }}</span>
+            </div>
+            {% if recipe.tags %}
+            <div class="col-md-6">
+                <h6>Tags</h6>
+                <div>
+                    {% for tag in recipe.tags %}
+                    <span class="badge bg-secondary me-1">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <hr>
+        
+        <!-- Ingredients -->
+        <div class="mb-4">
+            <h3>Ingredients</h3>
+            <ul class="list-group list-group-flush">
+                {% for ingredient in recipe.ingredients %}
+                <li class="list-group-item px-0">{{ ingredient }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <!-- Instructions -->
+        <div class="mb-4">
+            <h3>Instructions</h3>
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text" style="white-space: pre-line;">{{ recipe.instructions }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Recipe Actions</h5>
+                <div class="d-grid gap-2">
+                    <a href="/recipes/{{ recipe.id }}/edit" class="btn btn-primary">
+                        Edit Recipe
+                    </a>
+                    <form method="post" action="/recipes/{{ recipe.id }}/delete" 
+                          onsubmit="return confirm('Are you sure you want to delete this recipe?')">
+                        <button type="submit" class="btn btn-danger w-100">
+                            Delete Recipe
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="card-title">Recipe Info</h6>
+                <small class="text-muted">
+                    <div><strong>Created:</strong> {{ recipe.created_at.strftime('%B %d, %Y') }}</div>
+                    <div><strong>Updated:</strong> {{ recipe.updated_at.strftime('%B %d, %Y') }}</div>
+                    <div><strong>Ingredients:</strong> {{ recipe.ingredients|length }}</div>
+                    <div><strong>Difficulty:</strong> {{ recipe.difficulty }}</div>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="/" class="btn btn-outline-secondary">
+            ← Back to All Recipes
+        </a>
+    </div>
+</div>
+{% endblock %}
