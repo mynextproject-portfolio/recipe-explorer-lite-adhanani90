@@ -96,5 +96,5 @@ def export_recipes():
     """Export all recipes as JSON"""
     recipes = recipe_storage.get_all_recipes()
     # Convert to dict for JSON serialization
-    recipes_dict = [recipe.dict() for recipe in recipes]
+    recipes_dict = [recipe.model_dump() for recipe in recipes]
     return JSONResponse(content=recipes_dict)

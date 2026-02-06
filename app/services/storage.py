@@ -29,7 +29,7 @@ class RecipeStorage:
         return results
     
     def create_recipe(self, recipe_data: RecipeCreate) -> Recipe:
-        recipe = Recipe(**recipe_data.dict())
+        recipe = Recipe(**recipe_data.model_dump())
         self.recipes[recipe.id] = recipe
         return recipe
     
@@ -38,7 +38,7 @@ class RecipeStorage:
             return None
         
         recipe = self.recipes[recipe_id]
-        updated_data = recipe_data.dict()
+        updated_data = recipe_data.model_dump()
         for key, value in updated_data.items():
             setattr(recipe, key, value)
         recipe.updated_at = datetime.now()
