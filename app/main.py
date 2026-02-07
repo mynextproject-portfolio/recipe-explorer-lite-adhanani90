@@ -6,6 +6,7 @@ import os
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 import json
+from app.services.storage import recipe_storage
 
 
  
@@ -16,12 +17,6 @@ APP_NAME = "Recipe Explorer"
 VERSION = "1.0.0"
 DEBUG = True
 
-# Create FastAPI app
-app = FastAPI(title=APP_NAME, version=VERSION)
-
-# Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
 @asynccontextmanager 
 async def lifespan(app:FastAPI):
     #app startup
@@ -30,10 +25,20 @@ async def lifespan(app:FastAPI):
         try:
             with open(recipe_file, "r") as f:
                 singleRecipe = json.load(f)[0]
-            api.create_recipe(singleRecipe)
+            recipe_storage.import_recipes([singleRecipe])
         except Exception as e:
             print(f"✗ Error loading recipes: {e}")
+    yield
+    
  
+
+# Create FastAPI app
+app = FastAPI(title=APP_NAME, version=VERSION, lifespan=lifespan)
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
             
 
 
