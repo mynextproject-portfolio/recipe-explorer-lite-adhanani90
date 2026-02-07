@@ -13,9 +13,10 @@
       "Salt and pepper to taste",
       "Vegetable oil for frying"
     ],
-    "instructions": "Cut potatoes into thick fries, about 1/2 inch thick. Soak in cold water for 30 minutes to remove excess starch.\n\nHeat oil to 325°F (165°C) for the first fry. Fry potatoes for 3-4 minutes. Remove and drain on paper towels.\n\nIncrease oil temperature to 375°F (190°C). Fry potatoes again for 2-3 minutes until golden brown and crispy.\n\nFor the gravy: melt butter in a saucepan over medium heat. Whisk in flour and cook for 2 minutes to make a roux.\n\nGradually add beef stock while whisking constantly to prevent lumps. Add Worcestershire sauce.\n\nSimmer for 5-10 minutes until thickened. Season with salt and pepper.\n\nPlace hot fries in serving dish, top with cheese curds, then pour hot gravy over top.\n\nServe immediately while the cheese is melting and everything is hot.",
+    "instructions": ["Cut potatoes into thick fries about 1/2 inch thick.", "Soak in cold water for 30 minutes to remove excess starch", "Heat oil to 325°F (165°C) for the first fry and fry potatoes for 3-4 minutes.", " Remove and drain on paper towels.\n\n", "Increase oil temperature to 375°F (190°C). Fry potatoes again for 2-3 minutes until golden brown and crispy.\n\n", "For the gravy: melt butter in a saucepan over medium heat. Whisk in flour and cook for 2 minutes to make a roux.\n\n", "Gradually add beef stock while whisking constantly to prevent lumps. ", "Add Worcestershire sauce.\n\n", "Simmer for 5-10 minutes until thickened. ", "Season with salt and pepper.\n\n", "Place hot fries in serving dish, top with cheese curds, then pour hot gravy over top.\n\nServe immediately while the cheese is melting and everything is hot."],
     "tags": ["comfort food", "Canadian", "vegetarian-friendly"],
     "difficulty": "Easy",
+    "cuisine": "canadian",
     "created_at": "2024-01-15T10:30:00",
     "updated_at": "2024-01-15T10:30:00"
   },
