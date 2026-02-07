@@ -18,11 +18,12 @@ class Recipe(BaseModel):
     title: str 
     description: str
     ingredients: List[str]
-    instructions: str
+    instructions: List[str]
     tags: List[str] = Field(default_factory=list)
     difficulty: DifficultyLevel
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
+    cuisine: str
 
 
     
@@ -32,15 +33,17 @@ class RecipeCreate(BaseModel):
     title: str
     description: str
     ingredients: List[str]
-    instructions: str
+    instructions: List[str]
     tags: List[str] = Field(default_factory=list)
     difficulty: DifficultyLevel
+    cuisine:str
 
 
 class RecipeUpdate(BaseModel):
     title: str
     description: str
     ingredients: List[str]
-    instructions: str
+    instructions: List[str]
     tags: List[str]
     difficulty: DifficultyLevel
+    cuisine:str
