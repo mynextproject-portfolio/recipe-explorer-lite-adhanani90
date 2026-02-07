@@ -3,6 +3,13 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from app.routes import api, pages
 import os
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
+import json
+
+
+ 
+
 
 # App configuration
 APP_NAME = "Recipe Explorer"
@@ -14,6 +21,21 @@ app = FastAPI(title=APP_NAME, version=VERSION)
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@asynccontextmanager 
+async def lifespan(app:FastAPI):
+    #app startup
+    recipe_file = "sample-recipes.json"
+    if os.path.exists(recipe_file):
+        try:
+            with open(recipe_file, "r") as f:
+                singleRecipe = json.load(f)[0]
+            api.create_recipe(singleRecipe)
+        except Exception as e:
+            print(f"✗ Error loading recipes: {e}")
+ 
+            
+
 
 # Include routers
 app.include_router(api.router)
