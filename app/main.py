@@ -24,8 +24,8 @@ async def lifespan(app:FastAPI):
     if os.path.exists(recipe_file):
         try:
             with open(recipe_file, "r") as f:
-                singleRecipe = json.load(f)[0]
-            recipe_storage.import_recipes([singleRecipe])
+                sampleRecipes = json.load(f)
+            recipe_storage.import_recipes([sampleRecipes])
         except Exception as e:
             print(f"✗ Error loading recipes: {e}")
     yield

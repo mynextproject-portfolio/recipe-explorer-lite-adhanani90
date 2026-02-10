@@ -41,7 +41,7 @@
             <h3>Ingredients</h3>
             <ul class="list-group list-group-flush">
                 {% for ingredient in recipe.ingredients %}
-                <li class="list-group-item px-0">{{ ingredient }}</li>
+                <li class="list-group-item px-0">{{ ingredient.quantity}} {{ingredient.unit}} {{ingredient.item }}</li>
                 {% endfor %}
             </ul>
         </div>
@@ -49,11 +49,11 @@
         <!-- Instructions -->
         <div class="mb-4">
             <h3>Instructions</h3>
-            <div class="card">
-                <div class="card-body">
-                    <p class="card-text" style="white-space: pre-line;">{{ recipe.instructions }}</p>
-                </div>
-            </div>
+            <ul class="list-group list-group-flush">
+                {% for instruction in recipe.instructions%}
+                <li class="list-group-item px-0"> {{instruction}} </li>
+                {% endfor%}
+            </ul>
         </div>
     </div>
     

@@ -9,15 +9,46 @@ MAX_TITLE_LENGTH = 200
 MAX_INGREDIENTS = 50
 
 class DifficultyLevel(str, Enum):
+    def __str__(self):
+        return self.value
     EASY = "Easy"
     MEDIUM = "Medium" 
     HARD = "Hard"
+    
+class MeasurementUnit(str, Enum):
+    def __str__(self):
+        return self.value
+    # Volume
+    ML = "ml"
+    L = "liter"
+    TSP = "teaspoon"
+    TBSP = "tablespoon"
+    FL_OZ = "fl oz"
+    CUP = "cup"
+    PINT = "pint"
+    QUART = "quart"
+    
+    # Weight
+    G = "grams"
+    KG = "kg"
+    OZ = "oz"
+    LB = "lb"
+    
+    # Other
+    PINCH = "pinch"
+    WHOLE = "whole"
+    PIECE = "piece"
+    
+class Ingredient(BaseModel):
+    quantity: float
+    unit: MeasurementUnit
+    item: str
 
 class Recipe(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     title: str 
     description: str
-    ingredients: List[str]
+    ingredients: List[Ingredient]
     instructions: List[str]
     tags: List[str] = Field(default_factory=list)
     difficulty: DifficultyLevel
@@ -32,7 +63,7 @@ class Recipe(BaseModel):
 class RecipeCreate(BaseModel):
     title: str
     description: str
-    ingredients: List[str]
+    ingredients: List[Ingredient]
     instructions: List[str]
     tags: List[str] = Field(default_factory=list)
     difficulty: DifficultyLevel
@@ -42,7 +73,7 @@ class RecipeCreate(BaseModel):
 class RecipeUpdate(BaseModel):
     title: str
     description: str
-    ingredients: List[str]
+    ingredients: List[Ingredient]
     instructions: List[str]
     tags: List[str]
     difficulty: DifficultyLevel

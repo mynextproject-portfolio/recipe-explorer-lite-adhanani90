@@ -62,3 +62,9 @@ pytest -v        # Verbose output
 ---
 
 *Part of [mynextproject.dev](https://mynextproject.dev) - Learn to code like a professional*
+
+//TODO Add 3 features. To be able to add ingredients and see what recipes i can make using that. 
+        Add feature to see what cuisines i can cook
+        Add the vegan friendly and those tags
+        Clean up the instructions file
+        Make the cooking measurements mandatory

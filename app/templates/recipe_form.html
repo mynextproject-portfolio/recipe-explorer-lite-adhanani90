@@ -59,27 +59,84 @@
                         {% for ingredient in recipe.ingredients %}
                         <div class="ingredient-item mb-2">
                             <div class="input-group">
-                                <input type="text" class="form-control ingredient-input" 
-                                       value="{{ ingredient }}" required>
-                                <button type="button" class="btn btn-outline-danger remove-ingredient">Remove</button>
+
+                                <!-- Quantity -->
+                                <input type="number"
+                                    name="ingredients[{{ loop.index0 }}][quantity]"
+                                    class="form-control"
+                                    value="{{ ingredient.quantity }}"
+                                    min="0"
+                                    step="0.01"
+                                    inputmode="decimal"
+                                    required>
+
+                                <!-- Unit -->
+                                <select name="ingredients[{{ loop.index0 }}][unit]"
+                                        class="form-select"
+                                        required>
+                                    {% for unit in MeasurementUnit %}
+                                        <option value="{{ unit.value }}"
+                                                {% if ingredient.unit == unit %}selected{% endif %}>
+                                            {{ unit.value }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+
+                                <!-- Item -->
+                                <input type="text"
+                                    name="ingredients[{{ loop.index0 }}][item]"
+                                    class="form-control"
+                                    value="{{ ingredient.item }}"
+                                    placeholder="Ingredient"
+                                    required>
+
+                                <button type="button"
+                                        class="btn btn-outline-danger remove-ingredient">
+                                    Remove
+                                </button>
+
                             </div>
                         </div>
                         {% endfor %}
                     {% else %}
                         <div class="ingredient-item mb-2">
                             <div class="input-group">
-                                <input type="text" class="form-control ingredient-input" 
-                                       placeholder="Enter ingredient..." required>
-                                <button type="button" class="btn btn-outline-danger remove-ingredient">Remove</button>
+
+                                <input type="number"
+                                    name="ingredients[0][quantity]"
+                                    class="form-control"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="Qty"
+                                    required>
+
+                                <select name="ingredients[0][unit]"
+                                        class="form-select"
+                                        required>
+                                    {% for unit in MeasurementUnit %}
+                                        <option value="{{ unit.value }}">{{ unit.value }}</option>
+                                    {% endfor %}
+                                </select>
+
+                                <input type="text"
+                                    name="ingredients[0][item]"
+                                    class="form-control"
+                                    placeholder="Ingredient"
+                                    required>
+
+                                <button type="button"
+                                        class="btn btn-outline-danger remove-ingredient">
+                                    Remove
+                                </button>
+
                             </div>
                         </div>
                     {% endif %}
                 </div>
+
                 <button type="button" id="add-ingredient" class="btn btn-outline-primary btn-sm">
                     + Add Ingredient
                 </button>
-                <!-- Hidden textarea to submit ingredients -->
-                <textarea name="ingredients" id="ingredients-data" style="display: none;"></textarea>
             </div>
             
             <!-- Instructions Section -->
@@ -104,6 +161,15 @@
 
 {% block scripts %}
 <script>
+
+let ingredientIndex = document.querySelectorAll('#ingredients-container. ingredient-item').length;
+
+document.getElementById('add-ingredient').addEventListener('click', () => {
+    const container = document.getElementById('ingredients-container');
+    const div = document.createElement('div');
+    div.className = 'ingredient-item mb-2';});
+    
+
 // Form submission handler to collect dynamic fields
 document.querySelector('form').addEventListener('submit', function(e) {
     // Collect ingredients

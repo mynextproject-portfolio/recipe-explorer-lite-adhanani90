@@ -4,9 +4,29 @@ from fastapi.templating import Jinja2Templates
 from typing import List, Optional
 from app.models import RecipeCreate, RecipeUpdate
 from app.services.storage import recipe_storage
+from app.models import Ingredient, MeasurementUnit
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
+
+def parse_ingredients(form):
+    ingredients = {}
+    
+    for key,value in form.items():
+        if key.startswith("ingredients["):
+            index = int(key.split("[")[1].split("]")[0])
+            field = key.split("[")[2].rstrip("]")
+            ingredients.setdefault(index, {})[field] = value
+        
+        return [
+            Ingredient(
+            quantity=float(data["quantity"]),
+            unit=data["unit"],
+            item=data["item"]
+            )
+        for _, data in sorted(ingredients.items())
+    ]
+
 
 
 @router.get("/", response_class=HTMLResponse)
@@ -20,7 +40,9 @@ def home(request: Request, search: Optional[str] = None, message: Optional[str] 
     return templates.TemplateResponse(request, "index.html", {
         "recipes": recipes,
         "search_query": search or "",
-        "message": message
+        "message": message,
+        "MeasurementUnit": MeasurementUnit
+
     })
 
 
@@ -29,7 +51,8 @@ def new_recipe_form(request: Request):
     """New recipe form"""
     return templates.TemplateResponse(request, "recipe_form.html", {
         "recipe": None,
-        "is_edit": False
+        "is_edit": False,
+        "MeasurementUnit": MeasurementUnit
     })
 
 
@@ -42,7 +65,8 @@ def recipe_detail(request: Request, recipe_id: str, message: Optional[str] = Non
     
     return templates.TemplateResponse(request, "recipe_detail.html", {
         "recipe": recipe,
-        "message": message
+        "message": message,
+        "MeasurementUnit": MeasurementUnit
     })
 
 
@@ -55,51 +79,47 @@ def edit_recipe_form(request: Request, recipe_id: str):
     
     return templates.TemplateResponse(request, "recipe_form.html", {
         "recipe": recipe,
-        "is_edit": True
+        "is_edit": True,
+        "MeasurementUnit": MeasurementUnit
     })
 
 
 @router.post("/recipes/new")
-def create_recipe_form(
-    request: Request,
-    title: str = Form(...),
-    description: str = Form(...),
-    difficulty: str = Form(...),
-    ingredients: str = Form(...),
-    instructions: str = Form(...),
-    tags: str = Form(...)
-):
-    """Handle new recipe form submission"""
+async def create_recipe_form(request: Request):
     try:
-        # Check title length
+        form = await request.form()
+
+        title = form.get("title", "").strip()
+        description = form.get("description", "").strip()
+        difficulty = form.get("difficulty", "")
+        instructions = form.get("instructions", "").strip()
+        tags = form.get("tags", "")
+
         if len(title) > 200:
             raise ValueError("Title too long")
-        
-        # Parse ingredients (one per line) and tags (comma-separated)
-        ingredient_list = [ing.strip() for ing in ingredients.split('\n') if ing.strip()]
-        tag_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
-        
-        # Validation
-        if len(ingredient_list) == 0:
+
+        ingredients = parse_ingredients(form)
+        if not ingredients:
             raise ValueError("At least one ingredient required")
-        
-        if not instructions.strip():
-            raise ValueError("Instructions are required")
-        
+
+        tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+
         recipe_data = RecipeCreate(
             title=title,
             description=description,
             difficulty=difficulty,
-            ingredients=ingredient_list,
-            instructions=instructions.strip(),
+            ingredients=ingredients,
+            instructions=instructions,
             tags=tag_list
         )
-        
+
         new_recipe = recipe_storage.create_recipe(recipe_data)
+
         return RedirectResponse(
             url=f"/recipes/{new_recipe.id}?message=Recipe created successfully",
             status_code=303
         )
+
     except Exception as e:
         return RedirectResponse(
             url=f"/?message=Error creating recipe: {str(e)}",
@@ -108,57 +128,49 @@ def create_recipe_form(
 
 
 @router.post("/recipes/{recipe_id}/edit")
-def update_recipe_form(
-    request: Request,
-    recipe_id: str,
-    title: str = Form(...),
-    description: str = Form(...),
-    difficulty: str = Form(...),
-    ingredients: str = Form(...),
-    instructions: str = Form(...),
-    tags: str = Form(...)
-):
-    """Handle edit recipe form submission"""
+async def update_recipe_form(request: Request, recipe_id: str):
     try:
-        # Check title length
+        form = await request.form()
+
+        title = form.get("title", "").strip()
+        description = form.get("description", "").strip()
+        difficulty = form.get("difficulty", "")
+        instructions = form.get("instructions", "").strip()
+        tags = form.get("tags", "")
+
         if len(title) > 200:
-            raise ValueError("Title is too long!")
-        
-        # Parse ingredients (one per line) and tags (comma-separated)
-        ingredient_list = [ing.strip() for ing in ingredients.split('\n') if ing.strip()]
-        tag_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
-        
-        if len(ingredient_list) == 0:
-            raise ValueError("Need ingredients!")
-            
-        if not instructions.strip():
-            raise ValueError("Instructions are required")
-        
+            raise ValueError("Title too long")
+
+        ingredients = parse_ingredients(form)
+        if not ingredients:
+            raise ValueError("At least one ingredient required")
+
+        tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+
         recipe_data = RecipeUpdate(
             title=title,
             description=description,
             difficulty=difficulty,
-            ingredients=ingredient_list,
-            instructions=instructions.strip(),
+            ingredients=ingredients,
+            instructions=instructions,
             tags=tag_list
         )
-        
-        updated_recipe = recipe_storage.update_recipe(recipe_id, recipe_data)
-        if not updated_recipe:
-            return RedirectResponse(
-                url=f"/?message=Recipe not found",
-                status_code=303
-            )
-        
+
+        updated = recipe_storage.update_recipe(recipe_id, recipe_data)
+        if not updated:
+            raise ValueError("Recipe not found")
+
         return RedirectResponse(
             url=f"/recipes/{recipe_id}?message=Recipe updated successfully",
             status_code=303
         )
+
     except Exception as e:
         return RedirectResponse(
             url=f"/recipes/{recipe_id}?message=Error updating recipe: {str(e)}",
             status_code=303
         )
+
 
 
 @router.post("/recipes/{recipe_id}/delete")
